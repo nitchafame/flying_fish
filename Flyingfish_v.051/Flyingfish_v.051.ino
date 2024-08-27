@@ -1,6 +1,6 @@
 // Simple Karplus-Strong implemented for solar sounder, with temperature sensor.
 // DFISHKIN, 2021—2024. Thanks electro-music.com forums for inspiration!
-// thanks Lee Tusman and Fame Tothong and Keng for joining the initial crew of beta testers.
+// thanks Lee Tusman and Nitcha (Fame) Tothong and Kengchakaj for joining the initial crew of beta testers.
 
 #include <EEPROM.h>
 
@@ -75,7 +75,37 @@ float noteTable[24] = {
   note13, note14, note15, note16, note17, note18, note19, note20, note21, note22, note23, note24 
 };
 
+// Added Southeast Asian tuning freq from out research
+// written by elekhlekha (kengchakaj & Nitcha fame)
+///////////////////////////////////////////////////
+// Ranat Ek # 1-8 
+float bar1 = pulse / (1.0/1.0);
+float bar2 = pulse / (561.5/508.5);
+float bar3 = pulse / (619.9/508.5);
+float bar4 = pulse / (684.4/508.5);
+float bar5 = pulse / (755.7/508.5);
+float bar6 = pulse / (834.4/508.5);
+float bar7 = pulse / (921.2/508.5);
+float bar8 = pulse / (1017.1/508.5);
 
+float ranatTable[8] = {
+  bar1, bar2, bar3, bar4, bar5, bar6, bar7, bar8
+};
+///////////////////////////////////////////////////
+// Punong sound #1-8 SoundCultures from Cambodia
+float punong1 = pulse / (1.0/1.0);
+float punong2 = pulse / (411.5/369.0);
+float punong3 = pulse / (458/369.0);
+float punong4 = pulse / (493.6/369.0);
+float punong5 = pulse / (554.4/369.0);
+float punong6 = pulse / (682.0/369.0);
+float punong7 = pulse / (740.0/369.0);
+float punong8 = pulse / (823.0/369.0);
+
+float punongTable[8] = {
+  punong1, punong2, punong3, punong4, punong5, punong6, punong7, punong8
+};
+///////////////////////////////////////////////////
 
 int weights1[24] = {20, 1, 1, 1, 1, 1, 1, 20, 1, 1, 20, 1, 20, 1, 1, 1, 1, 1, 1, 20, 1, 1, 20, 1};
 /*by increasing numbers for each index in the weighted array, you make an item more likely to be chosen. 
@@ -83,6 +113,10 @@ zero for no choices, all 1s for regular random algo*/
 
 int weights2[24] = {1, 40, 1, 1, 1, 1, 40, 1, 1, 1, 1, 1, 1, 40, 1, 1, 1, 1, 40, 1, 1, 1, 1, 1};
 //try to emphasize 7
+
+int weightsRanat[8] = {30, 30, 30, 1, 30, 30, 1, 30};
+
+int weightsPunong[8] = {20, 1, 40, 40, 40, 30, 40, 1 };
 
 int randomweights[24] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
 
@@ -281,6 +315,10 @@ void loop() {
      break;
      case 4:
      FlyingFish(randomweights, noteTable, 0, 7, 0.5); 
+     case 5:
+     FlyingFish(weightsRanat, ranatTable, 0, 7, 1); 
+     case 6:
+     FlyingFish(weightsPunong, PunongTable, 0, 20, 4); 
      default:
       // Optional: handle unexpected values or do nothing
       break;  
